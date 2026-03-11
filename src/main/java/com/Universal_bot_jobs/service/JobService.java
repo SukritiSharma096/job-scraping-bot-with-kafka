@@ -5,6 +5,7 @@ import com.Universal_bot_jobs.factory.JobConnectorFactory;
 import com.Universal_bot_jobs.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -13,6 +14,7 @@ public class JobService {
 
     private final JobConnectorFactory factory;
     private final JobRepository repository;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<Job> scrapeAndSave(String site, String keyword, String location) {
 
@@ -28,7 +30,11 @@ public class JobService {
                 ))
                 .toList();
 
-        return repository.saveAll(newJobs);
+        List<Job> savedJobs = repository.saveAll(newJobs);
+
+        savedJobs.forEach(kafkaProducerService::sendJob);
+
+        return savedJobs;
     }
 
     public List<Job> getAllJobs() {
