@@ -3,12 +3,10 @@ package com.Universal_bot_jobs.connector;
 import com.Universal_bot_jobs.entity.Job;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chrome.*;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class NaukriConnector implements JobConnector {
@@ -19,93 +17,53 @@ public class NaukriConnector implements JobConnector {
     }
 
     @Override
-    public List<Job> scrape(String keyword, String location) {
+    public List<Job> scrape(String url) {
 
         List<Job> jobs = new ArrayList<>();
 
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36");
 
+        //options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-blink-features=AutomationControlled");
         WebDriver driver = new ChromeDriver(options);
 
         try {
 
-            String url = "https://www.naukri.com/"
-                    + keyword.replace(" ", "-").toLowerCase()
-                    + "-jobs-in-"
-                    + location.replace(" ", "-").toLowerCase();
-
-            System.out.println("Opening Naukri: " + url);
-
             driver.get(url);
 
-            Thread.sleep(7000);
-
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-
-            for (int i = 0; i < 5; i++) {
-                js.executeScript("window.scrollBy(0,800)");
-                Thread.sleep(2000);
-            }
+            Thread.sleep(8000);
 
             List<WebElement> jobCards =
                     driver.findElements(By.cssSelector("div.srp-jobtuple-wrapper"));
-
-            System.out.println("Naukri jobs found: " + jobCards.size());
-
-            String mainWindow = driver.getWindowHandle();
+            System.out.println("Jobs found: " + jobCards.size());
 
             for (WebElement card : jobCards) {
 
                 try {
 
-                    String title = getSafeText(card, "a.title");
-                    String company = getSafeText(card, "a.comp-name");
-                    String locationText = getSafeText(card, "span.locWdth");
+                    String title = card
+                            .findElement(By.cssSelector("a.title"))
+                            .getText();
 
-                    String link = getSafeAttr(card, "a.title", "href");
+                    String company = getSafe(card,"a.comp-name");
 
-                    if (link == null || link.isEmpty()) {
-                        continue;
-                    }
+                    String location = getSafe(card,"span.locWdth");
 
-                    String description = "N/A";
+                    String link = card
+                            .findElement(By.cssSelector("a.title"))
+                            .getAttribute("href");
 
-                    try {
+                    String description = getSafe(card,"span.job-desc");
 
-                        driver.switchTo().newWindow(WindowType.TAB);
-                        driver.get(link);
-
-                        Thread.sleep(5000);
-
-                        try {
-
-                            WebElement descElement = driver.findElement(
-                                    By.xpath("//div[contains(@class,'dang-inner-html')]")
-                            );
-
-                            description = descElement.getText();
-
-                        } catch (Exception e) {
-                            description = "N/A";
-                        }
-
-                        driver.close();
-
-                        driver.switchTo().window(mainWindow);
-
-                    } catch (Exception e) {
-                        description = "N/A";
-                    }
                     Job job = Job.builder()
                             .title(title)
                             .company(company)
-                            .location(locationText)
+                            .location(location)
                             .jobUrl(link)
                             .applyLink(link)
                             .description(description)
@@ -114,14 +72,12 @@ public class NaukriConnector implements JobConnector {
 
                     jobs.add(job);
 
-                    System.out.println("Saved job: " + title);
-
                 } catch (Exception ignored) {}
             }
 
         } catch (Exception e) {
 
-            System.out.println("Naukri scraping error: " + e.getMessage());
+            System.out.println("Naukri scrape error " + e.getMessage());
 
         } finally {
 
@@ -131,19 +87,13 @@ public class NaukriConnector implements JobConnector {
         return jobs;
     }
 
-    private String getSafeText(WebElement element, String css) {
-        try {
-            return element.findElement(By.cssSelector(css)).getText();
-        } catch (Exception e) {
-            return "N/A";
-        }
-    }
+    private String getSafe(WebElement parent,String selector){
 
-    private String getSafeAttr(WebElement element, String css, String attr) {
-        try {
-            return element.findElement(By.cssSelector(css)).getAttribute(attr);
-        } catch (Exception e) {
-            return null;
+        try{
+            return parent.findElement(By.cssSelector(selector)).getText();
+        }
+        catch(Exception e){
+            return "";
         }
     }
 }

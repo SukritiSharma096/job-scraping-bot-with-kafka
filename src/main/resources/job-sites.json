@@ -1,0 +1,25 @@
+{
+  "indeed": {
+    "urls": [
+      "https://in.indeed.com/jobs?q={keyword}&l=Bangalore",
+      "https://in.indeed.com/jobs?q={keyword}&l=Hyderabad",
+      "https://in.indeed.com/jobs?q={keyword}&l=Pune",
+      "https://in.indeed.com/jobs?q={keyword}&l=Delhi",
+      "https://www.naukri.com/{keyword}-jobs-in-pune",
+      "https://www.naukri.com/{keyword}-jobs-in-mumbai",
+      "https://www.naukri.com/{keyword}-jobs-in-mohali"
+    ]
+  },
+  "naukri": {
+    "urls": [
+      "https://www.naukri.com/{keyword}-jobs-in-bangalore",
+      "https://www.naukri.com/{keyword}-jobs-in-hyderabad",
+      "https://www.naukri.com/{keyword}-jobs-in-pune",
+      "https://www.naukri.com/{keyword}-jobs-in-mohali",
+      "https://www.naukri.com/{keyword}-jobs-in-delhi",
+      "https://www.naukri.com/{keyword}-jobs-in-chennai",
+      "https://www.naukri.com/{keyword}-jobs-in-noida",
+      "https://www.naukri.com/{keyword}-jobs-in-mumbai"
+    ]
+  }
+}

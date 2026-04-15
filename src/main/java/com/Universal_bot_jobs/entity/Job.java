@@ -1,4 +1,5 @@
 package com.Universal_bot_jobs.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "bot_jobs")
 public class Job {
 
     @Id

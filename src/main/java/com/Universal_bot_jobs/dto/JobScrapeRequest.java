@@ -7,5 +7,5 @@ public class JobScrapeRequest {
 
     private String site;
     private String keyword;
-    private String location;
+   // private String location;
 }
