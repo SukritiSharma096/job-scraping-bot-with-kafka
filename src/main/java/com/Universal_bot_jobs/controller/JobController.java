@@ -5,16 +5,15 @@ import com.Universal_bot_jobs.entity.Job;
 import com.Universal_bot_jobs.service.JobService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @Tag(name = "Job APIs", description = "Operations related to job scraping")
 @RestController
 @RequestMapping("/api/jobs")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class JobController {
 
     private final JobService service;
