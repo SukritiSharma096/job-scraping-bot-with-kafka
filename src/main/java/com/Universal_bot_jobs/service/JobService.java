@@ -16,7 +16,7 @@ public class JobService {
 
     private final JobConnectorFactory factory;
     private final JobRepository repository;
-    private final KafkaProducerService kafkaProducerService;
+//    private final KafkaProducerService kafkaProducerService;
     private final JobSitesConfig jobSitesConfig;
 
     public List<Job> scrapeAndSave(String site,String keyword){
@@ -49,7 +49,7 @@ public class JobService {
 
         List<Job> savedJobs = repository.saveAll(newJobs);
 
-        savedJobs.forEach(kafkaProducerService::sendJob);
+//        savedJobs.forEach(kafkaProducerService::sendJob);
 
         return savedJobs;
     }
